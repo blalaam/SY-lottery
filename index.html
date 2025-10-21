@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>声隅大转盘 - 幸运抽奖</title>
+    <meta name="description" content="声隅8x8大转盘抽奖游戏，试试你的手气赢取精美奖品！">
+    <meta name="keywords" content="抽奖,大转盘,幸运抽奖,8x8抽奖">
+    
+    <!-- CDN 预连接优化 -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+        }
+        header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .logo {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #ff8a00, #da1b60);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+        .subtitle {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .lottery-section {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 800px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .lottery-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #e94560;
+            font-weight: 600;
+        }
+        .lottery-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 5px;
+            width: 100%;
+            aspect-ratio: 1/1;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 15px;
+        }
+        .lottery-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            color: #fff;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            cursor: default;
+        }
+        .lottery-item.active {
+            background: linear-gradient(135deg, #ff8a00, #da1b60);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 138, 0, 0.8);
+            color: white;
+            z-index: 1;
+            animation: pulse 0.5s infinite alternate;
+        }
+        @keyframes pulse {
+            from { box-shadow: 0 0 10px rgba(255, 138, 0, 0.6); }
+            to { box-shadow: 0 0 20px rgba(255, 138, 0, 0.9); }
+        }
+        .start-btn-container {
+            margin: 30px 0;
+            text-align: center;
+        }
+        .start-btn {
+            background: linear-gradient(135deg, #ff8a00, #da1b60);
+            color: white;
+            border: none;
+            padding: 18px 60px;
+            border-radius: 50px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(255, 138, 0, 0.4);
+            letter-spacing: 2px;
+        }
+        .start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 138, 0, 0.6);
+        }
+        .start-btn:active {
+            transform: translateY(0);
+        }
+        .start-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.4rem;
+            min-height: 40px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border-left: 5px solid #ff8a00;
+            font-weight: 600;
+        }
+        .info-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .prize-section, .rules-section {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .prize-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .prize-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        .prize-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+        .prize-index {
+            background: linear-gradient(135deg, #ff8a00, #da1b60);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .rules-section h2, .prize-section h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #e94560;
+            font-size: 1.6rem;
+        }
+        .rules-list {
+            padding-left: 20px;
+        }
+        .rules-list li {
+            margin-bottom: 12px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        .history-section {
+            margin-top: 40px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .history-section h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #e94560;
+            font-size: 1.6rem;
+        }
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .history-item {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+        .history-item:last-child {
+            border-bottom: none;
+        }
+        .footer {
+            margin-top: 60px;
+            padding: 25px;
+            text-align: center;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            width: 100%;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        @media (max-width: 968px) {
+            .info-section {
+                grid-template-columns: 1fr;
+            }
+            .lottery-section {
+                max-width: 100%;
+            }
+            .lottery-item {
+                font-size: 12px;
+            }
+            .logo {
+                font-size: 2.8rem;
+            }
+            .prize-list {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+        @media (max-width: 768px) {
+            .lottery-grid {
+                gap: 3px;
+                padding: 10px;
+            }
+            .lottery-item {
+                font-size: 10px;
+            }
+            .start-btn {
+                padding: 15px 40px;
+                font-size: 1.2rem;
+            }
+            .logo {
+                font-size: 2.2rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .prize-list {
+                grid-template-columns: 1fr;
+            }
+            .lottery-item {
+                font-size: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">声隅大转盘</div>
+            <p class="subtitle">试试你的手气，赢取精美奖品！</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="lottery-section">
+                <h2 class="lottery-title">8x8宫格抽奖</h2>
+                <div class="lottery-grid" id="lottery-grid">
+                    <!-- 64个格子将通过JS动态生成 -->
+                </div>
+            </div>
+            
+            <div class="start-btn-container">
+                <button id="start-btn" class="start-btn">开始抽奖</button>
+            </div>
+            
+            <div id="result" class="result">点击"开始抽奖"按钮试试手气！</div>
+            
+            <div class="info-section">
+                <div class="prize-section">
+                    <h2>🎁 奖品列表</h2>
+                    <div class="prize-list" id="prize-list">
+                        <!-- 奖品列表将通过JS动态生成 -->
+                    </div>
+                </div>
+                
+                <div class="rules-section">
+                    <h2>📋 活动规则</h2>
+                    <ul class="rules-list">
+                        <li>点击"开始抽奖"按钮开始抽奖</li>
+                        <li>抽奖过程中请勿刷新页面</li>
+                        <li>中奖后奖品将在24小时内发放</li>
+                        <li>每个用户每天有3次抽奖机会</li>
+                        <li>本活动最终解释权归主办方所有</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="history-section">
+                <h2>📝 中奖记录</h2>
+                <div class="history-list" id="history-list">
+                    <div class="history-item">欢迎参与抽奖活动！</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>声隅大转盘 © 2023 | 祝您好运！</p>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载优化
+        document.addEventListener('DOMContentLoaded', function() {
+            const lotteryGrid = document.getElementById('lottery-grid');
+            const prizeList = document.getElementById('prize-list');
+            const startBtn = document.getElementById('start-btn');
+            const resultDiv = document.getElementById('result');
+            const historyList = document.getElementById('history-list');
+            
+            // 生成64个奖品名称
+            const prizeNames = [
+                "海洋之泪", "非洲之心", "坦克", "复苏呼吸机", 
+                "装甲车电池", "碳钎维版", "谢谢参与", "印象派名画",
+                "神秘宝箱", "黄金矿石", "能量核心", "智慧芯片",
+                "未来科技", "远古遗物", "星辰碎片", "月光宝石",
+                "太阳徽章", "彩虹水晶", "幸运四叶草", "魔法卷轴",
+                "龙之鳞片", "凤凰羽毛", "精灵之泪", "巨人力量",
+                "矮人工艺", "天使之翼", "恶魔契约", "时光沙漏",
+                "空间宝石", "命运骰子", "智慧之书", "勇气勋章",
+                "忠诚印记", "希望种子", "爱情信物", "友谊手链",
+                "和平橄榄", "战争号角", "胜利旗帜", "荣耀冠冕",
+                "知识宝典", "艺术灵感", "音乐旋律", "诗歌韵律",
+                "舞蹈节奏", "戏剧面具", "电影胶片", "摄影镜头",
+                "编程代码", "设计图纸", "建筑蓝图", "工程模型",
+                "医学突破", "科学发现", "技术创新", "文化传承",
+                "自然奇观", "宇宙奥秘", "生命密码", "意识觉醒",
+                "量子纠缠", "相对论", "弦理论", "多维空间"
+            ];
+            
+            // 生成64个格子
+            for (let i = 0; i < 64; i++) {
+                const item = document.createElement('div');
+                item.className = 'lottery-item';
+                item.setAttribute('data-index', i);
+                item.textContent = i;
+                lotteryGrid.appendChild(item);
+            }
+            
+            // 生成奖品列表
+            for (let i = 0; i < 64; i++) {
+                const prizeItem = document.createElement('div');
+                prizeItem.className = 'prize-item';
+                
+                const prizeIndex = document.createElement('div');
+                prizeIndex.className = 'prize-index';
+                prizeIndex.textContent = i;
+                
+                const prizeName = document.createElement('div');
+                prizeName.textContent = prizeNames[i];
+                
+                prizeItem.appendChild(prizeIndex);
+                prizeItem.appendChild(prizeName);
+                prizeList.appendChild(prizeItem);
+            }
+            
+            const lotteryItems = document.querySelectorAll('.lottery-item');
+            let isSpinning = false;
+            let history = [];
+
+            function startLottery() {
+                if (isSpinning) return;
+                
+                isSpinning = true;
+                startBtn.disabled = true;
+                startBtn.textContent = '抽奖中...';
+                resultDiv.textContent = '转盘旋转中...';
+                
+                // 清除所有激活状态
+                lotteryItems.forEach(item => item.classList.remove('active'));
+                
+                // 随机决定中奖位置 (0-63)
+                const targetIndex = Math.floor(Math.random() * 64);
+                
+                // 抽奖动画参数
+                const totalSteps = 25;
+                let step = 0;
+                let currentIndex = 0;
+                
+                function animate() {
+                    // 清除所有激活状态
+                    lotteryItems.forEach(item => item.classList.remove('active'));
+                    
+                    // 随机选择一个格子激活（单个闪烁效果）
+                    let randomIndex;
+                    do {
+                        randomIndex = Math.floor(Math.random() * 64);
+                    } while (step > totalSteps - 5 && randomIndex !== targetIndex);
+                    
+                    // 在最后几步中，逐渐向目标格子靠拢
+                    if (step > totalSteps - 10) {
+                        // 增加选中目标格子的概率
+                        if (Math.random() > 0.7) {
+                            randomIndex = targetIndex;
+                        }
+                    }
+                    
+                    // 激活选中的格子
+                    lotteryItems[randomIndex].classList.add('active');
+                    currentIndex = randomIndex;
+                    
+                    step++;
+                    
+                    if (step < totalSteps) {
+                        // 继续动画，间隔时间逐渐增加（减速效果）
+                        setTimeout(animate, 30 + (step * 8));
+                    } else {
+                        // 动画结束，显示中奖结果
+                        isSpinning = false;
+                        startBtn.disabled = false;
+                        startBtn.textContent = '开始抽奖';
+                        
+                        // 清除所有激活状态
+                        lotteryItems.forEach(item => item.classList.remove('active'));
+                        
+                        // 激活中奖格子
+                        lotteryItems[targetIndex].classList.add('active');
+                        
+                        // 显示中奖结果
+                        resultDiv.textContent = `🎊 恭喜您抽中: ${prizeNames[targetIndex]} 🎊`;
+                        
+                        // 添加到历史记录
+                        const now = new Date();
+                        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                        history.unshift({
+                            time: timeStr,
+                            prize: prizeNames[targetIndex]
+                        });
+                        
+                        // 更新历史记录显示
+                        updateHistory();
+                    }
+                }
+                
+                // 开始动画
+                animate();
+            }
+            
+            // 更新历史记录
+            function updateHistory() {
+                historyList.innerHTML = '';
+                if (history.length === 0) {
+                    historyList.innerHTML = '<div class="history-item">暂无记录，开始抽奖吧！</div>';
+                    return;
+                }
+                
+                history.slice(0, 10).forEach(item => {
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'history-item';
+                    historyItem.innerHTML = `<span>${item.time}</span><span>${item.prize}</span>`;
+                    historyList.appendChild(historyItem);
+                });
+            }
+            
+            // 绑定开始按钮点击事件
+            startBtn.addEventListener('click', startLottery);
+        });
+    </script>
+</body>
+</html>
