@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>声隅大转盘 - 幸运抽奖</title>
-    <meta name="description" content="声隅8x8大转盘抽奖游戏，试试你的手气赢取精美奖品！">
-    <meta name="keywords" content="抽奖,大转盘,幸运抽奖,8x8抽奖">
+    <title>声隅大转盘 - </title>
+    <meta name="description" content="声隅7x8大转盘抽奖游戏，试试你的手气，抽取想要的大红！">
+    <meta name="keywords" content="抽奖,大转盘,幸运抽奖,抽大红">
     
     <!-- CDN 预连接优化 -->
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
@@ -76,11 +76,11 @@
         }
         .lottery-grid {
             display: grid;
-            grid-template-columns: repeat(8, 1fr);
+            grid-template-columns: repeat(7, 1fr);
             grid-template-rows: repeat(8, 1fr);
-            gap: 5px;
+            gap: 4px;
             width: 100%;
-            aspect-ratio: 1/1;
+            aspect-ratio: 7/8;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.05);
             padding: 15px;
@@ -88,17 +88,54 @@
         }
         .lottery-item {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, #3498db, #2980b9);
             border-radius: 5px;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
             transition: all 0.2s ease;
             color: #fff;
             position: relative;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             cursor: default;
+            padding: 2px;
+            overflow: hidden;
+            min-height: 40px;
+        }
+        .lottery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 3px;
+        }
+        .lottery-item .item-number {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 9px;
+            padding: 1px 3px;
+            border-radius: 3px;
+            z-index: 2;
+        }
+        .lottery-item .item-name {
+            position: absolute;
+            bottom: 2px;
+            left: 2px;
+            right: 2px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 9px;
+            padding: 1px 2px;
+            border-radius: 3px;
+            text-align: center;
+            z-index: 2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .lottery-item.active {
             background: linear-gradient(135deg, #ff8a00, #da1b60);
@@ -107,6 +144,9 @@
             color: white;
             z-index: 1;
             animation: pulse 0.5s infinite alternate;
+        }
+        .lottery-item.active img {
+            filter: brightness(1.2);
         }
         @keyframes pulse {
             from { box-shadow: 0 0 10px rgba(255, 138, 0, 0.6); }
@@ -214,18 +254,18 @@
             line-height: 1.6;
             font-size: 1.1rem;
         }
-        .history-section {
+        .pool-section {
             margin-top: 40px;
             width: 100%;
             max-width: 1200px;
         }
-        .history-section h2 {
+        .pool-section h2 {
             margin-bottom: 20px;
             text-align: center;
             color: #e94560;
             font-size: 1.6rem;
         }
-        .history-list {
+        .pool-list {
             max-height: 200px;
             overflow-y: auto;
             background: rgba(255, 255, 255, 0.08);
@@ -233,14 +273,168 @@
             padding: 15px;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .history-item {
+        .pool-item {
             padding: 12px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             justify-content: space-between;
         }
-        .history-item:last-child {
+        .pool-item:last-child {
             border-bottom: none;
+        }
+        .selection-section {
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 1200px;
+        }
+        .selection-section h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #e94560;
+            font-size: 1.6rem;
+        }
+        .selection-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .selection-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .selection-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .selection-item.selected {
+            border-color: #ff8a00;
+            background: rgba(255, 138, 0, 0.2);
+        }
+        .selection-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .selection-item.selected .selection-checkbox {
+            background: #ff8a00;
+            border-color: #ff8a00;
+        }
+        .selection-item.selected .selection-checkbox::after {
+            content: "✓";
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .confirm-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            letter-spacing: 1px;
+            margin-top: 20px;
+        }
+        .confirm-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.6);
+        }
+        .confirm-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        .modal h2 {
+            color: #e94560;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        .modal-prizes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .modal-prize-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .modal-time {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            color: #ff8a00;
+        }
+        .modal-notice {
+            font-size: 1.3rem;
+            color: #ff8a00;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 138, 0, 0.1);
+            border-radius: 10px;
+            border-left: 5px solid #ff8a00;
+        }
+        .close-modal {
+            background: linear-gradient(135deg, #ff8a00, #da1b60);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        .close-modal:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 138, 0, 0.6);
         }
         .footer {
             margin-top: 60px;
@@ -259,13 +453,19 @@
                 max-width: 100%;
             }
             .lottery-item {
-                font-size: 12px;
+                font-size: 10px;
             }
             .logo {
                 font-size: 2.8rem;
             }
             .prize-list {
                 grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            .selection-list {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            .modal-prizes {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
         }
         @media (max-width: 768px) {
@@ -274,7 +474,8 @@
                 padding: 10px;
             }
             .lottery-item {
-                font-size: 10px;
+                font-size: 8px;
+                min-height: 30px;
             }
             .start-btn {
                 padding: 15px 40px;
@@ -283,13 +484,19 @@
             .logo {
                 font-size: 2.2rem;
             }
+            .selection-list {
+                grid-template-columns: 1fr;
+            }
         }
         @media (max-width: 480px) {
             .prize-list {
                 grid-template-columns: 1fr;
             }
             .lottery-item {
-                font-size: 8px;
+                font-size: 7px;
+            }
+            .modal-prizes {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -298,14 +505,14 @@
     <div class="container">
         <header>
             <div class="logo">声隅大转盘</div>
-            <p class="subtitle">试试你的手气，赢取精美奖品！</p>
+            <p class="subtitle">试试你的手气，抽取想要的大红！</p>
         </header>
         
         <div class="main-content">
             <div class="lottery-section">
-                <h2 class="lottery-title">8x8宫格抽奖</h2>
+                <h2 class="lottery-title">抽大红</h2>
                 <div class="lottery-grid" id="lottery-grid">
-                    <!-- 64个格子将通过JS动态生成 -->
+                    <!-- 53个格子将通过JS动态生成 -->
                 </div>
             </div>
             
@@ -317,7 +524,7 @@
             
             <div class="info-section">
                 <div class="prize-section">
-                    <h2>🎁 奖品列表</h2>
+                    <h2>🎁 大红列表</h2>
                     <div class="prize-list" id="prize-list">
                         <!-- 奖品列表将通过JS动态生成 -->
                     </div>
@@ -327,19 +534,41 @@
                     <h2>📋 活动规则</h2>
                     <ul class="rules-list">
                         <li>点击"开始抽奖"按钮开始抽奖</li>
+                        <li>每次抽奖最多抽7次，抽中"金色传说"额外增加一次</li>
+                        <li>抽奖前请先和客服确认，并在5分钟内完成抽奖</li>
                         <li>抽奖过程中请勿刷新页面</li>
-                        <li>中奖后奖品将在24小时内发放</li>
-                        <li>每个用户每天有3次抽奖机会</li>
-                        <li>本活动最终解释权归主办方所有</li>
+                        <li>抽奖完成后从大红奖池中选择5个奖品</li>
+                        <li>本活动最终解释权归主办方声隅电竞所有</li>
                     </ul>
                 </div>
             </div>
             
-            <div class="history-section">
-                <h2>📝 中奖记录</h2>
-                <div class="history-list" id="history-list">
-                    <div class="history-item">欢迎参与抽奖活动！</div>
+            <div class="pool-section">
+                <h2>📝 大红奖池</h2>
+                <div class="pool-list" id="pool-list">
+                    <div class="pool-item">抽奖完成后将显示您获得的大红</div>
                 </div>
+            </div>
+            
+            <div class="selection-section" id="selection-section" style="display: none;">
+                <h2>🎯 请选择5个奖品</h2>
+                <div class="selection-list" id="selection-list">
+                    <!-- 选择列表将通过JS动态生成 -->
+                </div>
+                <button id="confirm-btn" class="confirm-btn" disabled>确认选择 (0/5)</button>
+            </div>
+        </div>
+        
+        <!-- 结果弹窗 -->
+        <div id="result-modal" class="modal">
+            <div class="modal-content">
+                <h2>🎉 抽奖结果 🎉</h2>
+                <div class="modal-time" id="modal-time"></div>
+                <div class="modal-prizes" id="modal-prizes">
+                    <!-- 选择的奖品将通过JS动态生成 -->
+                </div>
+                <div class="modal-notice">请截图给客服</div>
+                <button class="close-modal" id="close-modal">关闭</button>
             </div>
         </div>
         
@@ -355,154 +584,329 @@
             const prizeList = document.getElementById('prize-list');
             const startBtn = document.getElementById('start-btn');
             const resultDiv = document.getElementById('result');
-            const historyList = document.getElementById('history-list');
+            const poolList = document.getElementById('pool-list');
+            const selectionSection = document.getElementById('selection-section');
+            const selectionList = document.getElementById('selection-list');
+            const confirmBtn = document.getElementById('confirm-btn');
+            const resultModal = document.getElementById('result-modal');
+            const modalTime = document.getElementById('modal-time');
+            const modalPrizes = document.getElementById('modal-prizes');
+            const closeModal = document.getElementById('close-modal');
             
-            // 生成64个奖品名称
-            const prizeNames = [
-                "海洋之泪", "非洲之心", "坦克", "复苏呼吸机", 
-                "装甲车电池", "碳钎维版", "谢谢参与", "印象派名画",
-                "神秘宝箱", "黄金矿石", "能量核心", "智慧芯片",
-                "未来科技", "远古遗物", "星辰碎片", "月光宝石",
-                "太阳徽章", "彩虹水晶", "幸运四叶草", "魔法卷轴",
-                "龙之鳞片", "凤凰羽毛", "精灵之泪", "巨人力量",
-                "矮人工艺", "天使之翼", "恶魔契约", "时光沙漏",
-                "空间宝石", "命运骰子", "智慧之书", "勇气勋章",
-                "忠诚印记", "希望种子", "爱情信物", "友谊手链",
-                "和平橄榄", "战争号角", "胜利旗帜", "荣耀冠冕",
-                "知识宝典", "艺术灵感", "音乐旋律", "诗歌韵律",
-                "舞蹈节奏", "戏剧面具", "电影胶片", "摄影镜头",
-                "编程代码", "设计图纸", "建筑蓝图", "工程模型",
-                "医学突破", "科学发现", "技术创新", "文化传承",
-                "自然奇观", "宇宙奥秘", "生命密码", "意识觉醒",
-                "量子纠缠", "相对论", "弦理论", "多维空间"
+            // 图片文件名列表（直接使用图片文件名作为奖品名称）
+            const imageFiles = [
+                "海洋之泪", "非洲之心", "ECMO", "半身像", "笔记本电脑", 
+                "便携军用雷达", "步战车模型", "刀片服务器", "动力电池组", "渡鸦",
+                "飞行记录仪", "浮力补偿设备", "复苏呼吸机", "高级咖啡豆", "高速阵列",
+                "呼吸机", "滑膛枪展品", "化石", "黄金瞪羚", "火箭燃料",
+                "监狱地图-4", "金色传说", "绝密服务器", "军用电台", "军用炮弹",
+                "军用无人机", "军用信息终端", "军用终端", "雷斯的留声机", "量子存储",
+                "曼德尔超算单元", "名贵机械表", "强化碳纤维板", "强力吸尘器", "赛伊德的怀表",
+                "扫托一体机器人", "摄影机", "实验数据", "天圆地方", "万金泪冠",
+                "万足金条", "微型反应炉", "卫星锅", "香槟", "薛定谔的红", "医疗机械人",
+                "鱼子酱", "云存储阵列", "装甲车电池", "自动体外除颤器", "纵横","显卡","主战坦克模型"
             ];
             
-            // 生成64个格子
-            for (let i = 0; i < 64; i++) {
-                const item = document.createElement('div');
-                item.className = 'lottery-item';
-                item.setAttribute('data-index', i);
-                item.textContent = i;
-                lotteryGrid.appendChild(item);
+            // 创建7x8网格，总共56个位置，使用前53个作为奖品
+            let itemIndex = 0;
+            const allLotteryItems = [];
+            
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 7; col++) {
+                    // 如果已经创建了53个格子，就停止
+                    if (itemIndex >= 53) break;
+                    
+                    const item = document.createElement('div');
+                    item.className = 'lottery-item';
+                    item.setAttribute('data-index', itemIndex);
+                    
+                    // 添加编号
+                    const numberSpan = document.createElement('span');
+                    numberSpan.className = 'item-number';
+                    numberSpan.textContent = itemIndex + 1;
+                    
+                    const prizeName = imageFiles[itemIndex];
+                    // 使用图片
+                    const img = document.createElement('img');
+                    img.src = `./images/${prizeName}.png`;
+                    img.alt = prizeName;
+                    img.title = prizeName;
+                    
+                    // 添加奖品名称
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'item-name';
+                    nameSpan.textContent = prizeName;
+                    
+                    img.onerror = function() {
+                        // 如果图片加载失败，显示文字
+                        this.style.display = 'none';
+                        const textSpan = document.createElement('span');
+                        textSpan.textContent = prizeName;
+                        textSpan.style.padding = '5px';
+                        textSpan.style.fontSize = '10px';
+                        item.appendChild(textSpan);
+                    };
+                    
+                    item.appendChild(numberSpan);
+                    item.appendChild(img);
+                    item.appendChild(nameSpan);
+                    
+                    lotteryGrid.appendChild(item);
+                    allLotteryItems.push(item);
+                    itemIndex++;
+                }
             }
             
             // 生成奖品列表
-            for (let i = 0; i < 64; i++) {
+            for (let i = 0; i < imageFiles.length; i++) {
                 const prizeItem = document.createElement('div');
                 prizeItem.className = 'prize-item';
                 
                 const prizeIndex = document.createElement('div');
                 prizeIndex.className = 'prize-index';
-                prizeIndex.textContent = i;
+                prizeIndex.textContent = i + 1;
                 
                 const prizeName = document.createElement('div');
-                prizeName.textContent = prizeNames[i];
+                prizeName.textContent = imageFiles[i];
                 
                 prizeItem.appendChild(prizeIndex);
                 prizeItem.appendChild(prizeName);
                 prizeList.appendChild(prizeItem);
             }
             
-            const lotteryItems = document.querySelectorAll('.lottery-item');
             let isSpinning = false;
-            let history = [];
+            let currentPool = [];
+            let selectedPrizes = [];
+            let currentDrawCount = 0;
+            let maxDrawCount = 7;
 
-            function startLottery() {
+            // 单次抽奖函数
+            function singleDraw() {
+                return new Promise((resolve) => {
+                    // 随机决定中奖位置 (0-52)
+                    const targetIndex = Math.floor(Math.random() * imageFiles.length);
+                    
+                    // 抽奖动画参数
+                    const totalSteps = 25;
+                    let step = 0;
+                    let currentIndex = 0;
+                    
+                    function animate() {
+                        // 清除所有激活状态
+                        allLotteryItems.forEach(item => item.classList.remove('active'));
+                        
+                        // 随机选择一个格子激活（单个闪烁效果）
+                        let randomIndex;
+                        do {
+                            randomIndex = Math.floor(Math.random() * allLotteryItems.length);
+                        } while (step > totalSteps - 5 && randomIndex !== targetIndex);
+                        
+                        // 在最后几步中，逐渐向目标格子靠拢
+                        if (step > totalSteps - 10) {
+                            // 增加选中目标格子的概率
+                            if (Math.random() > 0.7) {
+                                randomIndex = targetIndex;
+                            }
+                        }
+                        
+                        // 激活选中的格子
+                        allLotteryItems[randomIndex].classList.add('active');
+                        currentIndex = randomIndex;
+                        
+                        step++;
+                        
+                        if (step < totalSteps) {
+                            // 继续动画，间隔时间逐渐增加（减速效果）
+                            setTimeout(animate, 30 + (step * 8));
+                        } else {
+                            // 动画结束，显示中奖结果
+                            // 清除所有激活状态
+                            allLotteryItems.forEach(item => item.classList.remove('active'));
+                            
+                            // 激活中奖格子
+                            allLotteryItems[targetIndex].classList.add('active');
+                            
+                            // 获取中奖奖品名称
+                            const prizeName = imageFiles[targetIndex];
+                            
+                            // 添加到当前奖池
+                            currentPool.push(prizeName);
+                            
+                            // 更新奖池显示
+                            updatePool();
+                            
+                            resolve(prizeName);
+                        }
+                    }
+                    
+                    // 开始动画
+                    animate();
+                });
+            }
+
+            async function startLottery() {
                 if (isSpinning) return;
                 
                 isSpinning = true;
                 startBtn.disabled = true;
-                startBtn.textContent = '抽奖中...';
-                resultDiv.textContent = '转盘旋转中...';
+                resultDiv.textContent = '抽奖进行中...';
                 
-                // 清除所有激活状态
-                lotteryItems.forEach(item => item.classList.remove('active'));
-                
-                // 随机决定中奖位置 (0-63)
-                const targetIndex = Math.floor(Math.random() * 64);
-                
-                // 抽奖动画参数
-                const totalSteps = 25;
-                let step = 0;
-                let currentIndex = 0;
-                
-                function animate() {
-                    // 清除所有激活状态
-                    lotteryItems.forEach(item => item.classList.remove('active'));
-                    
-                    // 随机选择一个格子激活（单个闪烁效果）
-                    let randomIndex;
-                    do {
-                        randomIndex = Math.floor(Math.random() * 64);
-                    } while (step > totalSteps - 5 && randomIndex !== targetIndex);
-                    
-                    // 在最后几步中，逐渐向目标格子靠拢
-                    if (step > totalSteps - 10) {
-                        // 增加选中目标格子的概率
-                        if (Math.random() > 0.7) {
-                            randomIndex = targetIndex;
-                        }
-                    }
-                    
-                    // 激活选中的格子
-                    lotteryItems[randomIndex].classList.add('active');
-                    currentIndex = randomIndex;
-                    
-                    step++;
-                    
-                    if (step < totalSteps) {
-                        // 继续动画，间隔时间逐渐增加（减速效果）
-                        setTimeout(animate, 30 + (step * 8));
-                    } else {
-                        // 动画结束，显示中奖结果
-                        isSpinning = false;
-                        startBtn.disabled = false;
-                        startBtn.textContent = '开始抽奖';
-                        
-                        // 清除所有激活状态
-                        lotteryItems.forEach(item => item.classList.remove('active'));
-                        
-                        // 激活中奖格子
-                        lotteryItems[targetIndex].classList.add('active');
-                        
-                        // 显示中奖结果
-                        resultDiv.textContent = `🎊 恭喜您抽中: ${prizeNames[targetIndex]} 🎊`;
-                        
-                        // 添加到历史记录
-                        const now = new Date();
-                        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-                        history.unshift({
-                            time: timeStr,
-                            prize: prizeNames[targetIndex]
-                        });
-                        
-                        // 更新历史记录显示
-                        updateHistory();
-                    }
+                // 如果是第一次抽奖，重置当前奖池
+                if (currentDrawCount === 0) {
+                    currentPool = [];
+                    updatePool();
                 }
                 
-                // 开始动画
-                animate();
+                currentDrawCount++;
+                resultDiv.textContent = `抽奖进行中... (${currentDrawCount}/${maxDrawCount})`;
+                
+                const prizeName = await singleDraw();
+                
+                // 检查是否抽中"金色传说"，如果是则增加一次抽奖
+                if (prizeName === "金色传说") {
+                    maxDrawCount = 8;
+                    resultDiv.textContent = `抽中金色传说！额外增加一次抽奖机会！`;
+                    // 等待一段时间让用户看到提示
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                }
+                
+                // 检查是否完成所有抽奖
+                if (currentDrawCount >= maxDrawCount) {
+                    // 抽奖完成
+                    isSpinning = false;
+                    startBtn.disabled = false;
+                    resultDiv.textContent = `抽奖完成！您获得了 ${currentPool.length} 个奖品，请从大红奖池中选择5个`;
+                    
+                    // 重置抽奖计数
+                    currentDrawCount = 0;
+                    maxDrawCount = 7;
+                    
+                    // 显示选择界面
+                    showSelection();
+                } else {
+                    // 继续抽奖
+                    isSpinning = false;
+                    startBtn.disabled = false;
+                    resultDiv.textContent = `点击"开始抽奖"进行下一次抽奖 (${currentDrawCount}/${maxDrawCount})`;
+                }
             }
             
-            // 更新历史记录
-            function updateHistory() {
-                historyList.innerHTML = '';
-                if (history.length === 0) {
-                    historyList.innerHTML = '<div class="history-item">暂无记录，开始抽奖吧！</div>';
+            // 更新奖池显示
+            function updatePool() {
+                poolList.innerHTML = '';
+                if (currentPool.length === 0) {
+                    poolList.innerHTML = '<div class="pool-item">抽奖完成后将显示您获得的大红</div>';
                     return;
                 }
                 
-                history.slice(0, 10).forEach(item => {
-                    const historyItem = document.createElement('div');
-                    historyItem.className = 'history-item';
-                    historyItem.innerHTML = `<span>${item.time}</span><span>${item.prize}</span>`;
-                    historyList.appendChild(historyItem);
+                currentPool.forEach((prize, index) => {
+                    const poolItem = document.createElement('div');
+                    poolItem.className = 'pool-item';
+                    poolItem.innerHTML = `<span>${index + 1}</span><span>${prize}</span>`;
+                    poolList.appendChild(poolItem);
                 });
+            }
+            
+            // 显示选择界面
+            function showSelection() {
+                selectionSection.style.display = 'block';
+                selectionList.innerHTML = '';
+                selectedPrizes = [];
+                updateConfirmButton();
+                
+                currentPool.forEach((prize, index) => {
+                    const selectionItem = document.createElement('div');
+                    selectionItem.className = 'selection-item';
+                    selectionItem.setAttribute('data-index', index);
+                    
+                    const checkbox = document.createElement('div');
+                    checkbox.className = 'selection-checkbox';
+                    
+                    const prizeName = document.createElement('div');
+                    prizeName.textContent = prize;
+                    
+                    selectionItem.appendChild(checkbox);
+                    selectionItem.appendChild(prizeName);
+                    
+                    selectionItem.addEventListener('click', function() {
+                        toggleSelection(index);
+                    });
+                    
+                    selectionList.appendChild(selectionItem);
+                });
+            }
+            
+            // 切换选择状态
+            function toggleSelection(index) {
+                const selectionItem = document.querySelector(`.selection-item[data-index="${index}"]`);
+                
+                if (selectedPrizes.includes(index)) {
+                    // 取消选择
+                    selectedPrizes = selectedPrizes.filter(i => i !== index);
+                    selectionItem.classList.remove('selected');
+                } else {
+                    // 选择
+                    if (selectedPrizes.length < 5) {
+                        selectedPrizes.push(index);
+                        selectionItem.classList.add('selected');
+                    }
+                }
+                
+                updateConfirmButton();
+            }
+            
+            // 更新确认按钮状态
+            function updateConfirmButton() {
+                const count = selectedPrizes.length;
+                confirmBtn.textContent = `确认选择 (${count}/5)`;
+                confirmBtn.disabled = count !== 5;
+            }
+            
+            // 确认选择
+            function confirmSelection() {
+                if (selectedPrizes.length !== 5) return;
+                
+                const finalSelection = selectedPrizes.map(index => currentPool[index]);
+                
+                // 显示结果弹窗
+                showResultModal(finalSelection);
+            }
+            
+            // 显示结果弹窗
+            function showResultModal(prizes) {
+                // 设置时间
+                const now = new Date();
+                const timeStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2, '0')}-${now.getDate().toString().padStart(2, '0')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+                modalTime.textContent = `抽取时间: ${timeStr}`;
+                
+                // 设置奖品
+                modalPrizes.innerHTML = '';
+                prizes.forEach(prize => {
+                    const prizeItem = document.createElement('div');
+                    prizeItem.className = 'modal-prize-item';
+                    prizeItem.textContent = prize;
+                    modalPrizes.appendChild(prizeItem);
+                });
+                
+                // 显示弹窗
+                resultModal.style.display = 'flex';
+            }
+            
+            // 关闭弹窗
+            function closeResultModal() {
+                resultModal.style.display = 'none';
+                selectionSection.style.display = 'none';
+                resultDiv.textContent = '选择完成！请截图给客服。';
             }
             
             // 绑定开始按钮点击事件
             startBtn.addEventListener('click', startLottery);
+            
+            // 绑定确认按钮点击事件
+            confirmBtn.addEventListener('click', confirmSelection);
+            
+            // 绑定关闭弹窗事件
+            closeModal.addEventListener('click', closeResultModal);
         });
     </script>
 </body>
